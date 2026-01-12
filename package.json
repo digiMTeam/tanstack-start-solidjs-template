@@ -13,7 +13,9 @@
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
+    "@ark-ui/solid": "^5.30.0",
     "@fontsource/inter": "^5.1.1",
+    "@kobalte/core": "^0.13.11",
     "@strapi/client": "^1.5.0",
     "@t3-oss/env-core": "^0.13.8",
     "@tailwindcss/vite": "^4.0.6",
