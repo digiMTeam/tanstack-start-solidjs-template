@@ -9,17 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PostsRouteImport } from './routes/posts'
+import { Route as DeferredRouteImport } from './routes/deferred'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PostsPostIdRouteImport } from './routes/posts/$postId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
 import { Route as DemoStrapiRouteImport } from './routes/demo/strapi'
 import { Route as DemoFormRouteImport } from './routes/demo.form'
 import { Route as DemoStrapiArticleIdRouteImport } from './routes/demo/strapi_.$articleId'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo.start.server-funcs'
 
+const PostsRoute = PostsRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeferredRoute = DeferredRouteImport.update({
+  id: '/deferred',
+  path: '/deferred',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PostsPostIdRoute = PostsPostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => PostsRoute,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
@@ -49,26 +67,35 @@ const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/deferred': typeof DeferredRoute
+  '/posts': typeof PostsRouteWithChildren
   '/demo/form': typeof DemoFormRoute
   '/demo/strapi': typeof DemoStrapiRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/posts/$postId': typeof PostsPostIdRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/demo/strapi/$articleId': typeof DemoStrapiArticleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/deferred': typeof DeferredRoute
+  '/posts': typeof PostsRouteWithChildren
   '/demo/form': typeof DemoFormRoute
   '/demo/strapi': typeof DemoStrapiRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/posts/$postId': typeof PostsPostIdRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/demo/strapi/$articleId': typeof DemoStrapiArticleIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/deferred': typeof DeferredRoute
+  '/posts': typeof PostsRouteWithChildren
   '/demo/form': typeof DemoFormRoute
   '/demo/strapi': typeof DemoStrapiRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/posts/$postId': typeof PostsPostIdRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/demo/strapi_/$articleId': typeof DemoStrapiArticleIdRoute
 }
@@ -76,31 +103,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/deferred'
+    | '/posts'
     | '/demo/form'
     | '/demo/strapi'
     | '/demo/tanstack-query'
+    | '/posts/$postId'
     | '/demo/start/server-funcs'
     | '/demo/strapi/$articleId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/deferred'
+    | '/posts'
     | '/demo/form'
     | '/demo/strapi'
     | '/demo/tanstack-query'
+    | '/posts/$postId'
     | '/demo/start/server-funcs'
     | '/demo/strapi/$articleId'
   id:
     | '__root__'
     | '/'
+    | '/deferred'
+    | '/posts'
     | '/demo/form'
     | '/demo/strapi'
     | '/demo/tanstack-query'
+    | '/posts/$postId'
     | '/demo/start/server-funcs'
     | '/demo/strapi_/$articleId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DeferredRoute: typeof DeferredRoute
+  PostsRoute: typeof PostsRouteWithChildren
   DemoFormRoute: typeof DemoFormRoute
   DemoStrapiRoute: typeof DemoStrapiRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
@@ -110,12 +148,33 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
+    '/posts': {
+      id: '/posts'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof PostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deferred': {
+      id: '/deferred'
+      path: '/deferred'
+      fullPath: '/deferred'
+      preLoaderRoute: typeof DeferredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/posts/$postId': {
+      id: '/posts/$postId'
+      path: '/$postId'
+      fullPath: '/posts/$postId'
+      preLoaderRoute: typeof PostsPostIdRouteImport
+      parentRoute: typeof PostsRoute
     }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
@@ -155,8 +214,20 @@ declare module '@tanstack/solid-router' {
   }
 }
 
+interface PostsRouteChildren {
+  PostsPostIdRoute: typeof PostsPostIdRoute
+}
+
+const PostsRouteChildren: PostsRouteChildren = {
+  PostsPostIdRoute: PostsPostIdRoute,
+}
+
+const PostsRouteWithChildren = PostsRoute._addFileChildren(PostsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DeferredRoute: DeferredRoute,
+  PostsRoute: PostsRouteWithChildren,
   DemoFormRoute: DemoFormRoute,
   DemoStrapiRoute: DemoStrapiRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
