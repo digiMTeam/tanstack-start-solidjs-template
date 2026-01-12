@@ -1,31 +1,22 @@
 import { Link } from '@tanstack/solid-router'
-
-import TanStackQueryHeaderUser from '../integrations/tanstack-query/header-user.tsx'
-
-import { createSignal } from 'solid-js'
+import { createSignal, For } from 'solid-js'
 import {
-  ChevronDown,
-  ChevronRight,
-  Globe,
   Home,
-  House,
-  Layers,
   Menu,
   X,
 } from 'lucide-solid'
+import TanStackQueryHeaderUser from '../integrations/tanstack-query/header-user.tsx'
+import { siteConfig } from '../config/site'
 
 export default function Header() {
   const [isOpen, setIsOpen] = createSignal(false)
-  const [groupedExpanded, setGroupedExpanded] = createSignal<
-    Record<string, boolean>
-  >({})
 
   return (
     <>
-      <header class="p-4 flex items-center bg-gray-800 text-white shadow-lg">
+      <header class="p-4 flex items-center bg-gray-800 text-white shadow-lg sticky top-0 z-40">
         <button
           onClick={() => setIsOpen(true)}
-          class="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          class="p-2 hover:bg-gray-700 rounded-lg transition-colors md:hidden"
           aria-label="Open menu"
         >
           <Menu size={24} />
@@ -39,6 +30,19 @@ export default function Header() {
             />
           </Link>
         </h1>
+        <nav class="hidden md:flex items-center gap-6 ml-auto">
+             <For each={siteConfig.mainNav}>
+                {(item) => (
+                  <Link
+                    to={item.href}
+                    class="text-sm font-medium hover:text-cyan-400 transition-colors"
+                    activeProps={{ class: 'text-cyan-400' }}
+                  >
+                    {item.title}
+                  </Link>
+                )}
+             </For>
+        </nav>
       </header>
 
       <aside
@@ -58,74 +62,30 @@ export default function Header() {
         </div>
 
         <nav class="flex-1 p-4 overflow-y-auto">
-          <Link
-            to="/"
-            onClick={() => setIsOpen(false)}
-            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              class:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Home size={20} />
-            <span class="font-medium">Home</span>
-          </Link>
+          <For each={siteConfig.mainNav}>
+            {(item) => (
+              <Link
+                to={item.href}
+                onClick={() => setIsOpen(false)}
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+                activeProps={{
+                  class:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                }}
+              >
+                  {/* TODO: Add icons support to config if needed */}
+                <Home size={20} />
+                <span class="font-medium">{item.title}</span>
+              </Link>
+            )}
+          </For>
 
-          {/* Demo Links Start */}
+          <div class="my-4 border-t border-gray-700"></div>
 
-          <Link
-            to="/demo/start/server-funcs"
-            onClick={() => setIsOpen(false)}
-            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              class:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Globe size={20} />
-            <span class="font-medium">Start - Server Functions</span>
-          </Link>
+          {/* Demo Links - Keeping them for now in mobile menu or moving to config?
+              For now let's just use what's in siteConfig which has the demos
+          */}
 
-          <Link
-            to="/demo/form"
-            onClick={() => setIsOpen(false)}
-            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              class:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Globe size={20} />
-            <span class="font-medium">Form</span>
-          </Link>
-
-          <Link
-            to="/demo/strapi"
-            onClick={() => setIsOpen(false)}
-            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              class:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Globe size={20} />
-            <span class="font-medium">Strapi</span>
-          </Link>
-
-          <Link
-            to="/demo/tanstack-query"
-            onClick={() => setIsOpen(false)}
-            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              class:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <Globe size={20} />
-            <span class="font-medium">TanStack Query</span>
-          </Link>
-
-          {/* Demo Links End */}
         </nav>
 
         <div class="p-4 border-t border-gray-700 bg-gray-800 flex flex-col gap-2">

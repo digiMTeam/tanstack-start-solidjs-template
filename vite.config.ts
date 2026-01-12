@@ -16,7 +16,17 @@ export default defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+        // Whether to extract links from the HTML and prerender them also
+        crawlLinks: true,
+      },
+      sitemap: {
+        enabled: true,
+        host: 'https://tanstack.com', // TODO: Update with actual URL
+      },
+    }),
     solidPlugin({ ssr: true }),
   ],
 })

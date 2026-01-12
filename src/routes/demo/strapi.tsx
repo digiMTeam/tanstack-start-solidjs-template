@@ -5,8 +5,13 @@ import { Show, For } from 'solid-js'
 export const Route = createFileRoute('/demo/strapi')({
   component: RouteComponent,
   loader: async () => {
-    const { data: strapiArticles } = await articles.find()
-    return strapiArticles
+    try {
+      const { data: strapiArticles } = await articles.find()
+      return strapiArticles
+    } catch (e) {
+      console.warn('Failed to fetch articles from Strapi:', e)
+      return []
+    }
   },
 })
 

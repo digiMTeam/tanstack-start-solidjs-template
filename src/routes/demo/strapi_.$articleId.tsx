@@ -4,8 +4,13 @@ import { createFileRoute, Link } from '@tanstack/solid-router'
 export const Route = createFileRoute('/demo/strapi_/$articleId')({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const { data: article } = await articles.findOne(params.articleId)
-    return article
+    try {
+      const { data: article } = await articles.findOne(params.articleId)
+      return article
+    } catch (e) {
+      console.warn('Failed to fetch article from Strapi:', e)
+      return null
+    }
   },
 })
 
@@ -26,13 +31,14 @@ function RouteComponent() {
             fill="currentColor"
           >
             <path
-              fillRule="evenodd"
+              fill-rule="evenodd"
               d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
+              clip-rule="evenodd"
             />
           </svg>
           Back to Articles
         </Link>
+
 
         <article class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-8">
           <h1 class="text-4xl font-bold text-white mb-4">
